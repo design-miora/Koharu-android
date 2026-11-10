@@ -1,13 +1,3 @@
-package com.miora.Awesome! Since my previous message had a minor glitch with the text formatting, let's make sure your `MainActivity.kt` is fully updated and wired up with the page grid.
-
-### Step 13: Update `MainActivity.kt` to Display the Page Grid
-
-1. Go back to your repository page at [github.com/design-miora/Koharu-android](https://github.com/design-miora/Koharu-android).
-2. Go to `app/src/main/java/com/miora/koharu/MainActivity.kt`.
-3. Click the **Pencil Icon** (Edit this file).
-4. Replace the entire content with this fully integrated version:
-
-```kotlin
 package com.miora.koharu
 
 import android.net.Uri
@@ -21,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.miora.koharu.native.KoharuNative
 import com.miora.koharu.ui.MangaPageItem
 import com.miora.koharu.ui.PageGridScreen
 
@@ -43,10 +34,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KoharuMainScreen() {
-    var workspaceTitle by remember { mutableStateOf("No active workspace") }
+    var workspaceTitle by remember { mutableStateOf("Koharu Core: ${KoharuNative.getCoreVersion()}") }
     var pages by remember { mutableStateOf(listOf<MangaPageItem>()) }
 
-    // SAF Directory Picker (Opening a Manga Folder)
     val folderPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
     ) { uri: Uri? ->
@@ -63,7 +53,6 @@ fun KoharuMainScreen() {
         }
     }
 
-    // SAF Document Picker (Opening CBZ / Image Files)
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
@@ -83,7 +72,7 @@ fun KoharuMainScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(workspaceTitle) }
+                title = { Text(workspaceTitle, style = MaterialTheme.typography.titleMedium) }
             )
         },
         bottomBar = {
@@ -118,7 +107,7 @@ fun KoharuMainScreen() {
         PageGridScreen(
             pages = pages,
             onPageClick = { selectedPage ->
-                // Page click action placeholder for future reader view
+                // Page click handler
             },
             modifier = Modifier.padding(innerPadding)
         )
