@@ -9,9 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.miora.koharu.ui.MangaPageItem
+import com.miora.koharu.ui.PageGridScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,23 +23,34 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    KoharuHomeScreen()
+                    KoharuMainScreen()
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KoharuHomeScreen() {
-    var selectedUriText by remember { mutableStateOf("No file or folder selected") }
+fun KoharuMainScreen() {
+    var workspaceTitle by remember { mutableStateOf("No active workspace") }
+    var pages by remember { mutableStateOf(listOf<MangaPageItem>()) }
 
     // SAF Directory Picker (Opening a Manga Folder)
     val folderPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
     ) { uri: Uri? ->
         uri?.let {
-            selectedUriText = "Selected Folder: ${it.path}"
+            workspaceTitle = "Folder: ${it.lastPathSegment ?: it.path}"
+            // Generate mock pages for testing the grid view
+            pages = (0..11).map { index ->
+                MangaPageItem(
+                    index = index,
+                    uri = it,
+                    name = "Page_${index + 1}.jpg",
+                    isProcessed = index % 3 == 0
+                )
+            }
         }
     }
 
@@ -47,60 +59,8 @@ fun KoharuHomeScreen() {
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         uri?.let {
-            selectedUriText = "Selected File: ${it.path}"
-        }
-    }
+            workspaceTitle = "Archive: ${it.lastPathFantastic work! Your memory-conscious `PageGridScreen.kt` component is successfully committed, laying down a solid foundation for handling multi-page manga chapters without hitting mobile RAM bottlenecks.
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Koharu Android",
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Text(
-            text = "Hybrid AI Manga Processor & Translation Suite",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
-        )
+Since you've completed setting up the core navigation, document picker, FFI skeleton, and grid viewer, you are in a great position to wire everything together in `MainActivity.kt` or begin exploring local model integration. 
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Active Workspace",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = selectedUriText,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Button(onClick = { folderPickerLauncher.launch(null) }) {
-                Text("Open Folder")
-            }
-
-            Button(onClick = { 
-                filePickerLauncher.launch(arrayOf("application/x-cbz", "image/*", "application/zip")) 
-            }) {
-                Text("Open CBZ / Image")
-            }
-        }
-    }
-}
+Let me know whenever you're ready to tackle the next phase, and we'll keep moving forward step by step!
