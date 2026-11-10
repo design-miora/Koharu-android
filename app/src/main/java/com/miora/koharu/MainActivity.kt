@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.miora.koharu.native.KoharuNative
 import com.miora.koharu.ui.MangaPageItem
 import com.miora.koharu.ui.PageGridScreen
+import com.miora.koharu.ui.PageReaderScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    KoharuMainScreen()
+                    KoharuAppRoot()
                 }
             }
         }
@@ -33,9 +34,10 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KoharuMainScreen() {
+fun KoharuAppRoot() {
     var workspaceTitle by remember { mutableStateOf("Koharu Core: ${KoharuNative.getCoreVersion()}") }
     var pages by remember { mutableStateOf(listOf<MangaPageItem>()) }
+    var selectedPage by remember { mutableStateOf<MangaPageItem?>(null) }
 
     val folderPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
@@ -69,47 +71,55 @@ fun KoharuMainScreen() {
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(workspaceTitle, style = MaterialTheme.typography.titleMedium) }
-            )
-        },
-        bottomBar = {
-            Surface(
-                tonalElevation = 8.dp,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+    // Conditional Navigation between Grid and Reader View
+    if (selectedPage != null) {
+        PageReaderScreen(
+            page = selectedPage!!,
+            onBack = { selectedPage = null }
+        )
+    } else {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(workspaceTitle, style = MaterialTheme.typography.titleMedium) }
+                )
+            },
+            bottomBar = {
+                Surface(
+                    tonalElevation = 8.dp,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Button(
-                        onClick = { folderPickerLauncher.launch(null) },
-                        modifier = Modifier.weight(1f)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text("Open Folder")
-                    }
-                    Button(
-                        onClick = { 
-                            filePickerLauncher.launch(arrayOf("application/x-cbz", "image/*", "application/zip")) 
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Open CBZ")
+                        Button(
+                            onClick = { folderPickerLauncher.launch(null) },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Open Folder")
+                        }
+                        Button(
+                            onClick = { 
+                                filePickerLauncher.launch(arrayOf("application/x-cbz", "image/*", "application/zip")) 
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Open CBZ")
+                        }
                     }
                 }
             }
+        ) { innerPadding ->
+            PageGridScreen(
+                pages = pages,
+                onPageClick = { page ->
+                    selectedPage = page
+                },
+                modifier = Modifier.padding(innerPadding)
+            )
         }
-    ) { innerPadding ->
-        PageGridScreen(
-            pages = pages,
-            onPageClick = { selectedPage ->
-                // Page click handler
-            },
-            modifier = Modifier.padding(innerPadding)
-        )
     }
 }
