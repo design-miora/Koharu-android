@@ -23,14 +23,9 @@ Koharu-android/
     └── android-ci.yml             # Cloud CI/CD build configuration
 
 Building Locally
-Ensure you have the Android SDK, NDK, and Rust stable toolchain installed with mobile targets:
-
-Bash
+1. Ensure you have the Android SDK, NDK, and Rust stable toolchain installed with mobile targets:
 rustup target add aarch64-linux-android x86_64-linux-android
 cargo install cargo-ndk --locked
-Build the Android debug package:
 
-Bash
+2. Build the Android debug package:
 ./gradlew assembleDebug
-
-5. Click **Commit changes...** at the top right and save the file.
