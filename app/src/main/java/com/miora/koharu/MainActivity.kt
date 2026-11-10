@@ -1,3 +1,13 @@
+package com.miora.Awesome! Since my previous message had a minor glitch with the text formatting, let's make sure your `MainActivity.kt` is fully updated and wired up with the page grid.
+
+### Step 13: Update `MainActivity.kt` to Display the Page Grid
+
+1. Go back to your repository page at [github.com/design-miora/Koharu-android](https://github.com/design-miora/Koharu-android).
+2. Go to `app/src/main/java/com/miora/koharu/MainActivity.kt`.
+3. Click the **Pencil Icon** (Edit this file).
+4. Replace the entire content with this fully integrated version:
+
+```kotlin
 package com.miora.koharu
 
 import android.net.Uri
@@ -42,7 +52,6 @@ fun KoharuMainScreen() {
     ) { uri: Uri? ->
         uri?.let {
             workspaceTitle = "Folder: ${it.lastPathSegment ?: it.path}"
-            // Generate mock pages for testing the grid view
             pages = (0..11).map { index ->
                 MangaPageItem(
                     index = index,
@@ -59,8 +68,59 @@ fun KoharuMainScreen() {
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         uri?.let {
-            workspaceTitle = "Archive: ${it.lastPathFantastic work! Your memory-conscious `PageGridScreen.kt` component is successfully committed, laying down a solid foundation for handling multi-page manga chapters without hitting mobile RAM bottlenecks.
+            workspaceTitle = "Archive: ${it.lastPathSegment ?: it.path}"
+            pages = (0..7).map { index ->
+                MangaPageItem(
+                    index = index,
+                    uri = it,
+                    name = "Archive_Page_${index + 1}.jpg",
+                    isProcessed = index == 0
+                )
+            }
+        }
+    }
 
-Since you've completed setting up the core navigation, document picker, FFI skeleton, and grid viewer, you are in a great position to wire everything together in `MainActivity.kt` or begin exploring local model integration. 
-
-Let me know whenever you're ready to tackle the next phase, and we'll keep moving forward step by step!
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(workspaceTitle) }
+            )
+        },
+        bottomBar = {
+            Surface(
+                tonalElevation = 8.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = { folderPickerLauncher.launch(null) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Open Folder")
+                    }
+                    Button(
+                        onClick = { 
+                            filePickerLauncher.launch(arrayOf("application/x-cbz", "image/*", "application/zip")) 
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Open CBZ")
+                    }
+                }
+            }
+        }
+    ) { innerPadding ->
+        PageGridScreen(
+            pages = pages,
+            onPageClick = { selectedPage ->
+                // Page click action placeholder for future reader view
+            },
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
+}
