@@ -21,7 +21,7 @@ jobs:
           cache: gradle
 
       - name: Set up Android NDK
-        uses: nsetup/setup-ndk@v1
+        uses: npxbr/setup-ndk@v1
         with:
           ndk-version: r25c
 
