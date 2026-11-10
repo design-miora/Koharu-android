@@ -8,7 +8,7 @@
 | Feature Category | Upstream Feature | Android Status | Implementation Notes / Target |
 | :--- | :--- | :---: | :--- |
 | **Android Architecture** | Native Container & CI | 🟢 | Jetpack Compose + Cargo-NDK FFI Skeleton + GitHub Actions CI |
-| **Project Management** | Import Folders, CBZ, Images | 🔴 | SAF-compliant document picker (Android 10+) |
+| **Project Management** | Import Folders, CBZ, Images | 🟢 | SAF-compliant document picker (`OpenDocumentTree` & `OpenDocument`) |
 | **Detection & OCR** | Text Region Segmentation | 🔴 | ONNX / NDK runtime detection models |
 | **Translation** | Local GGUF LLM | 🔴 | Hybrid AI Engine; User-imported GGUF models |
 | **Inpainting** | Generative Text Removal | 🔴 | Memory-optimized page tile processing |
