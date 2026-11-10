@@ -3,8 +3,7 @@ name: Koharu Android CI
 on:
   push:
     branches: [ main, "android/*" ]
-  pull_request:
-    branches: [ main, "android/*" ]
+  workflow_dispatch:
 
 jobs:
   build-android:
@@ -14,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
