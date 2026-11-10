@@ -14,11 +14,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
+
+      - name: Set up Android NDK
+        uses: nsetup/setup-ndk@v1
+        with:
+          ndk-version: r25c
 
       - name: Set up Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -34,7 +39,13 @@ jobs:
           cargo ndk --target aarch64-linux-android --target x86_64-linux-android --platform 29 build --release
 
       - name: Grant Execute Permission for Gradle Wrapper
-        run: chmod +x gradlew || true
+        run: chmod +x ./gradlew
 
-      - name: Build Android App (Debug)
+      - name: Build Android App (Debug APK)
         run: ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: koharu-app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
