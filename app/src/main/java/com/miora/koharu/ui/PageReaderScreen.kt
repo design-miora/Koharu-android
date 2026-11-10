@@ -10,7 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.miora.koharu.native.KoharuNative
@@ -22,7 +22,8 @@ fun PageReaderScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var processingStatus by remember { mutableStateOf("Ready to process") }
+    val context = LocalContext.current
+    var processingStatus by remember { mutableStateOf("Ready to process page") }
     var isProcessing by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -50,13 +51,25 @@ fun PageReaderScreen(
                     Button(
                         onClick = {
                             isProcessing = true
-                            processingStatus = "Calling Rust FFI pipeline..."
-                            
-                            // Simulate sending dummy image buffer to Rust backend
-                            val dummyBytes =ByteArray(1024) { 0xFF.toByte() }
-                            val responseJson = KoharuNative.processPage(dummyBytes)
-                            
-                            processingStatus = "Result from Rust: $responseJson"
+                            processingStatus = "Reading image bytes & calling Rust FFI..."
+
+                            try {
+                                // Read actual image bytes from ContentResolver
+                                val inputStream = context.contentResolver.openInputStream(page.uri)
+                                val imageBytes = inputStream?.readBytes() ?: byteArrayOf()
+                                inputStream?.close()
+
+                                if (imageBytes.isNotEmpty()) {
+                                    // Send real bytes to Rust backend pipeline
+                                    val responseJson = KoharuNative.processPage(imageBytes)
+                                    processingStatus = "Rust Response: $responseJson"
+                                } else {
+                                    processingStatus = "Error: Could not read bytes from URI"
+                                }
+                            } catch (e: Exception) {
+                                processingStatus = "Error: ${e.localizedMessage}"
+                            }
+
                             isProcessing = false
                         },
                         enabled = !isProcessing,
@@ -78,7 +91,7 @@ fun PageReaderScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Simulated Page View Canvas Area
+            // Page View Area
             Box(
                 modifier = Modifier
                     .weight(1f)
