@@ -20,7 +20,7 @@ jobs:
           cache: gradle
 
       - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1
+        uses: nttld/setup-ndk@v1   # was: npxbr/setup-ndk (repo doesn't exist)
         with:
           ndk-version: r25c
 
