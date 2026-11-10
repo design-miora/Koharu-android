@@ -1,0 +1,40 @@
+name: Koharu Android CI
+
+on:
+  push:
+    branches: [ main, "android/*" ]
+  pull_request:
+    branches: [ main, "android/*" ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Set up Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android, x86_64-linux-android
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk --locked
+
+      - name: Build Rust FFI Crate
+        run: |
+          cd crates/koharu-ffi
+          cargo ndk --target aarch64-linux-android --target x86_64-linux-android --platform 29 build --release
+
+      - name: Grant Execute Permission for Gradle Wrapper
+        run: chmod +x gradlew || true
+
+      - name: Build Android App (Debug)
+        run: ./gradlew assembleDebug
