@@ -1,2 +1,11 @@
+[package]
+name = "koharu-ffi"
+version = "0.1.0"
+edition = "2021"   # lib.rs uses #[no_mangle]; edition 2024 requires #[unsafe(no_mangle)]
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
 image = { version = "0.24", default-features = false, features = ["jpeg", "png"] }
