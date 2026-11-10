@@ -1,10 +1,2 @@
-[package]
-name = "koharu-ffi"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-crate-type = ["cdylib", "rlib"]
-
 [dependencies]
-# Dependencies will link to koharu-core once workspace dependencies are finalized
+image = { version = "0.24", default-features = false, features = ["jpeg", "png"] }
