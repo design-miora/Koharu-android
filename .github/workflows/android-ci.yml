@@ -17,10 +17,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
       - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1   # was: npxbr/setup-ndk (repo doesn't exist)
+        uses: nttld/setup-ndk@v1
         with:
           ndk-version: r25c
 
@@ -33,15 +32,18 @@ jobs:
         run: cargo install cargo-ndk --locked
 
       - name: Build Rust FFI Crate
+        working-directory: crates/koharu-ffi
         run: |
-          cd crates/koharu-ffi
-          cargo ndk --target aarch64-linux-android --target x86_64-linux-android --platform 29 build --release
+          cargo ndk --target aarch64-linux-android --target x86_64-linux-android --platform 29 \
+            -o ../../app/src/main/jniLibs build --release
 
-      - name: Grant Execute Permission for Gradle Wrapper
-        run: chmod +x ./gradlew
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
 
       - name: Build Android App (Debug APK)
-        run: ./gradlew assembleDebug
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
