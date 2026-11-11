@@ -28,6 +28,9 @@ jobs:
         with:
           targets: aarch64-linux-android, x86_64-linux-android
 
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+
       - name: Install cargo-ndk
         run: cargo install cargo-ndk --locked
 
