@@ -5,20 +5,22 @@ object KoharuNative {
         try {
             System.loadLibrary("koharu_ffi")
         } catch (e: UnsatisfiedLinkError) {
-            // Handled gracefully during early UI/CI scaffolding
+            // Library missing: the fallbacks below keep the app from crashing.
         }
     }
 
-    // Native bridge declarations linking to Rust FFI
+    // Native bridge: each one maps to a Rust function named
+    // Java_com_miora_koharu_native_KoharuNative_<name>
     external fun nativeGetVersion(): String
     external fun nativeInitEngine(modelDir: String): Boolean
     external fun nativeProcessPage(imageData: ByteArray, dataLen: Int): String
-    external fun nativeFreeString(ptr: Long)
 
+    // Throwable (not Exception) because a missing native function throws
+    // UnsatisfiedLinkError, which is an Error.
     fun getCoreVersion(): String {
         return try {
             nativeGetVersion()
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             "0.1.0-alpha (Kotlin Fallback)"
         }
     }
@@ -26,7 +28,7 @@ object KoharuNative {
     fun initEngine(modelDir: String): Boolean {
         return try {
             nativeInitEngine(modelDir)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             false
         }
     }
@@ -34,7 +36,7 @@ object KoharuNative {
     fun processPage(imageData: ByteArray): String {
         return try {
             nativeProcessPage(imageData, imageData.size)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             "{\"status\":\"error\",\"message\":\"Failed to invoke native process\"}"
         }
     }
